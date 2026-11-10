@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grade 10 Physics: Work Interactive Module</title>
+    <!-- Google Fonts & Font Awesome Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Mountains+of+Christmas:wght@700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- html2canvas for seamless PNG summary generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        xmasRed: {
+                            DEFAULT: '#C41E3A',
+                            dark: '#961128',
+                            light: '#E63956'
+                        },
+                        xmasGreen: {
+                            DEFAULT: '#165B33',
+                            dark: '#0B2B18',
+                            light: '#1E7A45'
+                        },
+                        xmasGold: {
+                            DEFAULT: '#FFD700',
+                            dark: '#D4AF37',
+                            light: '#FFE44D'
+                        },
+                        pineText: '#0B2B18',
+                        snowBg: '#FAFAFA'
+                    },
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                        festive: ['"Mountains of Christmas"', 'cursive']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #165B33;
+            border-radius: 8px;
+        }
+        .festive-border {
+            border: 3px solid #165B33;
+            outline: 2px dashed #C41E3A;
+            outline-offset: -8px;
+        }
+        .gold-glow {
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-6px); }
+        }
+        .floating {
+            animation: float 3s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="min-h-full font-sans text-slate-800 bg-slate-100 flex flex-col justify-between selection:bg-xmasRed selection:text-white">
+
+    <!-- Header Section with Christmas Festive Aesthetic -->
+    <header class="bg-xmasGreen text-white shadow-xl relative overflow-hidden border-b-4 border-xmasGold">
+        <!-- Decorative Holiday Elements -->
+        <div class="absolute -left-6 -top-6 text-white/10 text-8xl pointer-events-none select-none">
+            <i class="fa-solid fa-snowflake"></i>
+        </div>
+        <div class="absolute right-10 -bottom-10 text-white/10 text-9xl pointer-events-none select-none">
+            <i class="fa-solid fa-candy-cane"></i>
+        </div>
+
+        <div class="max-w-6xl mx-auto px-4 py-5 flex flex-col md:flex-row justify-between items-center relative z-10 gap-4">
+            <div class="flex items-center gap-3 text-center md:text-left">
+                <div class="w-12 h-12 rounded-2xl bg-xmasRed flex items-center justify-center text-xmasGold text-2xl shadow-md border border-xmasGold/50">
+                    <i class="fa-solid fa-bolt-lightning"></i>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2 justify-center md:justify-start">
+                        <span class="text-xs font-bold tracking-widest uppercase bg-xmasGold text-xmasGreen-dark px-2 py-0.5 rounded-full">Grade 10 Physics</span>
+                        <span class="text-xs text-xmasGold/90 font-medium"><i class="fa-solid fa-holly-berry"></i> Festive Learning</span>
+                    </div>
+                    <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight text-white mt-0.5">Interactive Physics: <span class="text-xmasGold font-festive text-3xl md:text-4xl">Work</span></h1>
+                </div>
+            </div>
+
+            <!-- Global Score & Sound Control Bar -->
+            <div class="flex items-center gap-3 bg-xmasGreen-dark/70 backdrop-blur-md p-2.5 rounded-2xl border border-white/10 shadow-inner">
+                <div class="px-3 py-1 bg-white/10 rounded-xl text-center">
+                    <span class="text-[10px] uppercase tracking-wider text-slate-300 block font-semibold">Total Progress</span>
+                    <span id="score-display" class="text-lg font-bold text-xmasGold">0 / 25 pts</span>
+                </div>
+                
+                <button id="audio-toggle" onclick="toggleAudio()" class="w-10 h-10 rounded-xl bg-white/10 hover:bg-white/20 transition flex items-center justify-center text-white text-lg" title="Toggle Sound Effects">
+                    <i id="audio-icon" class="fa-solid fa-volume-high text-xmasGold"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Section Progress Indicator Bar -->
+        <div class="w-full bg-xmasGreen-dark h-2.5 relative">
+            <div id="overall-progress-bar" class="h-full bg-gradient-to-r from-xmasGold to-yellow-300 transition-all duration-500 rounded-r-full" style="width: 0%"></div>
+        </div>
+    </header>
+
+    <!-- Main Active Workspace Container -->
+    <main class="max-w-6xl mx-auto px-4 py-8 flex-grow w-full">
+
+        <!-- Student Registration & Identification Form Card -->
+        <div class="bg-white rounded-3xl p-6 md:p-8 shadow-xl border border-slate-200 mb-8 relative">
+            <div class="absolute -top-3 left-8 bg-xmasRed text-white px-4 py-1 rounded-full text-xs font-bold tracking-wider uppercase shadow-md">
+                <i class="fa-solid fa-user-graduate mr-1"></i> Student Information
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-2">
+                <div>
+                    <label for="student-name" class="block text-sm font-semibold text-pineText mb-2">
+                        Student Full Name <span class="text-xmasRed">*</span>
+                    </label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                            <i class="fa-solid fa-pen-nib"></i>
+                        </div>
+                        <input type="text" id="student-name" placeholder="Enter your full name..." 
+                            class="w-full pl-10 pr-4 py-3 bg-slate-50 border-2 border-slate-200 rounded-xl focus:border-xmasGreen focus:bg-white focus:outline-none transition font-medium text-slate-800"
+                            oninput="updateStudentDetails()">
+                    </div>
+                </div>
+
+                <div>
+                    <label for="student-section" class="block text-sm font-semibold text-pineText mb-2">
+                        Grade 10 Section <span class="text-xmasRed">*</span>
+                    </label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                            <i class="fa-solid fa-chalkboard-user"></i>
+                        </div>
+                        <select id="student-section" onchange="updateStudentDetails()" 
+                            class="w-full pl-10 pr-4 py-3 bg-slate-50 border-2 border-slate-200 rounded-xl focus:border-xmasGreen focus:bg-white focus:outline-none transition font-medium text-slate-800 appearance-none">
+                            <option value="" disabled selected>Select Section...</option>
+                            <option value="Kings">Kings</option>
+                            <option value="Chronicles">Chronicles</option>
+                            <option value="Ezra">Ezra</option>
+                        </select>
+                        <div class="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none text-slate-400">
+                            <i class="fa-solid fa-chevron-down text-xs"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs for Parts 1, 2, 3 and Final Summary -->
+        <div class="flex flex-wrap gap-2 md:gap-4 mb-8 justify-center">
+            <button onclick="switchTab('part1')" id="tab-btn-part1" class="tab-btn active px-5 py-3 rounded-2xl font-bold text-sm transition-all flex items-center gap-2 bg-xmasGreen text-white shadow-lg border-2 border-xmasGreen">
+                <i class="fa-solid fa-magnifying-glass-chart"></i> Part 1: Work or No Work? <span class="bg-white/20 px-2 py-0.5 rounded-full text-xs">(5 pts)</span>
+            </button>
+
+            <button onclick="switchTab('part2')" id="tab-btn-part2" class="tab-btn px-5 py-3 rounded-2xl font-bold text-sm transition-all flex items-center gap-2 bg-white text-slate-600 hover:bg-slate-100 border-2 border-slate-200">
+                <i class="fa-solid fa-calculator"></i> Part 2: W = F × d <span class="bg-slate-100 px-2 py-0.5 rounded-full text-xs">(10 pts)</span>
+            </button>
+
+            <button onclick="switchTab('part3')" id="tab-btn-part3" class="tab-btn px-5 py-3 rounded-2xl font-bold text-sm transition-all flex items-center gap-2 bg-white text-slate-600 hover:bg-slate-100 border-2 border-slate-200">
+                <i class="fa-solid fa-compass-drafting"></i> Part 3: W = F cosθ × d <span class="bg-slate-100 px-2 py-0.5 rounded-full text-xs">(10 pts)</span>
+            </button>
+
+            <button onclick="switchTab('summary')" id="tab-btn-summary" class="tab-btn px-5 py-3 rounded-2xl font-bold text-sm transition-all flex items-center gap-2 bg-xmasGold text-pineText hover:bg-yellow-400 border-2 border-xmasGold shadow-sm">
+                <i class="fa-solid fa-award"></i> Summary & Certificate
+            </button>
+        </div>
+
+        <!-- PART 1: Work or No Work Identification -->
+        <section id="part1" class="tab-content block">
+            <div class="bg-white rounded-3xl p-6 md:p-8 shadow-xl border border-slate-200">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 pb-4 border-b border-slate-100">
+                    <div>
+                        <span class="text-xs font-bold text-xmasRed uppercase tracking-wider">Concept Identification</span>
+                        <h2 class="text-2xl font-bold text-pineText">Part 1: Determining Mechanical Work</h2>
+                        <p class="text-slate-600 text-sm mt-1">
+                            In Physics, Work is done only when a force causes a displacement in the direction of the force (W = F × d). Read each scenario carefully.
+                        </p>
+                    </div>
+                    <div id="badge-part1-status" class="flex items-center gap-3 bg-slate-50 p-3 rounded-2xl border border-slate-200 min-w-[200px]">
+                        <div class="w-12 h-12 rounded-xl bg-slate-200 flex items-center justify-center text-slate-400 text-2xl" id="badge-p1-icon">
+                            <i class="fa-solid fa-shield-halved"></i>
+                        </div>
+                        <div>
+                            <span class="text-[10px] uppercase font-bold text-slate-400 block tracking-wider">Badge Status</span>
+                            <span id="badge-p1-title" class="text-xs font-bold text-slate-500">Work Detective Locked</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Scenario Items Container -->
+                <div id="part1-scenarios" class="space-y-6">
+                    <!-- Scenario items rendered dynamically via JS -->
+                </div>
+
+                <div class="mt-8 pt-4 border-t border-slate-100 flex justify-between items-center">
+                    <span id="part1-score-tag" class="text-sm font-bold text-pineText">Score: 0 / 5</span>
+                    <button onclick="switchTab('part2')" class="px-6 py-3 bg-xmasGreen hover:bg-xmasGreen-light text-white font-bold rounded-xl shadow-md transition flex items-center gap-2">
+                        Next: Part 2 <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- PART 2: Calculating Basic Work (W = F * d) -->
+        <section id="part2" class="tab-content hidden">
+            <div class="bg-white rounded-3xl p-6 md:p-8 shadow-xl border border-slate-200">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 pb-4 border-b border-slate-100">
+                    <div>
+                        <span class="text-xs font-bold text-xmasRed uppercase tracking-wider">Formula Application</span>
+                        <h2 class="text-2xl font-bold text-pineText">Part 2: Solving for W, F, or d</h2>
+                        <p class="text-slate-600 text-sm mt-1">
+                            Use the linear work formula: <strong class="text-xmasRed">Work (W) = Force (F) × Distance (d)</strong>. Round final numeric answers to <strong>2 decimal places</strong>.
+                        </p>
+                    </div>
+                    <div id="badge-part2-status" class="flex items-center gap-3 bg-slate-50 p-3 rounded-2xl border border-slate-200 min-w-[200px]">
+                        <div class="w-12 h-12 rounded-xl bg-slate-200 flex items-center justify-center text-slate-400 text-2xl" id="badge-p2-icon">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i>
+                        </div>
+                        <div>
+                            <span class="text-[10px] uppercase font-bold text-slate-400 block tracking-wider">Badge Status</span>
+                            <span id="badge-p2-title" class="text-xs font-bold text-slate-500">Formula Wizard Locked</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Part 2 Questions Container -->
+                <div id="part2-questions" class="space-y-6">
+                    <!-- Dynamic Questions injected via JS -->
+                </div>
+
+                <div class="mt-8 pt-4 border-t border-slate-100 flex justify-between items-center">
+                    <span id="part2-score-tag" class="text-sm font-bold text-pineText">Score: 0 / 10</span>
+                    <button onclick="switchTab('part3')" class="px-6 py-3 bg-xmasGreen hover:bg-xmasGreen-light text-white font-bold rounded-xl shadow-md transition flex items-center gap-2">
+                        Next: Part 3 <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- PART 3: Work at an Angle (W = F cos theta * d) -->
+        <section id="part3" class="tab-content hidden">
+            <div class="bg-white rounded-3xl p-6 md:p-8 shadow-xl border border-slate-200">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 pb-4 border-b border-slate-100">
+                    <div>
+                        <span class="text-xs font-bold text-xmasRed uppercase tracking-wider">Trigonometric Vector Work</span>
+                        <h2 class="text-2xl font-bold text-pineText">Part 3: Work at an Angle (θ)</h2>
+                        <p class="text-slate-600 text-sm mt-1">
+                            When force is applied at an angle θ relative to the horizontal x-axis: <strong class="text-xmasRed">W = F × cos(θ) × d</strong>. Round answers to <strong>2 decimal places</strong>.
+                        </p>
+                    </div>
+                    <div id="badge-part3-status" class="flex items-center gap-3 bg-slate-50 p-3 rounded-2xl border border-slate-200 min-w-[200px]">
+                        <div class="w-12 h-12 rounded-xl bg-slate-200 flex items-center justify-center text-slate-400 text-2xl" id="badge-p3-icon">
+                            <i class="fa-solid fa-drafting-compass"></i>
+                        </div>
+                        <div>
+                            <span class="text-[10px] uppercase font-bold text-slate-400 block tracking-wider">Badge Status</span>
+                            <span id="badge-p3-title" class="text-xs font-bold text-slate-500">Trig Titan Locked</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Part 3 Questions Container -->
+                <div id="part3-questions" class="space-y-8">
+                    <!-- Dynamic Questions & Visual Vectors injected via JS -->
+                </div>
+
+                <div class="mt-8 pt-4 border-t border-slate-100 flex justify-between items-center">
+                    <span id="part3-score-tag" class="text-sm font-bold text-pineText">Score: 0 / 10</span>
+                    <button onclick="switchTab('summary')" class="px-6 py-3 bg-xmasGold hover:bg-yellow-400 text-pineText font-bold rounded-xl shadow-md transition flex items-center gap-2">
+                        View Final Summary <i class="fa-solid fa-award"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- SUMMARY & CERTIFICATE VIEW -->
+        <section id="summary" class="tab-content hidden">
+            <div class="bg-white rounded-3xl p-6 md:p-8 shadow-xl border border-slate-200 flex flex-col items-center">
+                <div class="text-center max-w-2xl mx-auto mb-8">
+                    <span class="text-xs font-bold text-xmasRed uppercase tracking-wider">Performance Assessment</span>
+                    <h2 class="text-3xl font-extrabold text-pineText mt-1">Activity Completion & Record</h2>
+                    <p class="text-slate-600 text-sm mt-2">
+                        Review your overall performance score below. Once satisfied, click the download button to save your official Christmas-themed performance certificate as a PNG file.
+                    </p>
+                </div>
+
+                <!-- Certificate Visual Preview Canvas Card -->
+                <div id="certificate-card" class="w-full max-w-3xl bg-white p-8 rounded-3xl festive-border shadow-2xl relative overflow-hidden my-4 text-slate-800">
+                    <!-- Festive Background Overlay Effects -->
+                    <div class="absolute -right-12 -top-12 text-slate-100 text-9xl pointer-events-none select-none">
+                        <i class="fa-solid fa-tree"></i>
+                    </div>
+                    <div class="absolute -left-12 -bottom-12 text-slate-100 text-9xl pointer-events-none select-none">
+                        <i class="fa-solid fa-snowflake"></i>
+                    </div>
+
+                    <div class="relative z-10 flex flex-col items-center text-center">
+                        <!-- Top Header Logo / Title -->
+                        <div class="flex items-center gap-3 mb-2">
+                            <span class="text-xmasRed text-3xl"><i class="fa-solid fa-holly-berry"></i></span>
+                            <span class="font-festive text-3xl font-bold text-xmasGreen-dark">Physics Mastery Certificate</span>
+                            <span class="text-xmasRed text-3xl"><i class="fa-solid fa-holly-berry"></i></span>
+                        </div>
+                        <p class="text-xs uppercase tracking-widest text-slate-500 font-bold mb-6">Topic: Work, Force & Displacement | Grade 10 Physics</p>
+
+                        <!-- Student Details display -->
+                        <div class="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 mb-6 flex flex-col sm:flex-row justify-between items-center gap-2">
+                            <div class="text-left">
+                                <span class="text-[10px] uppercase font-bold text-slate-400 block">Student Name</span>
+                                <span id="cert-student-name" class="text-xl font-extrabold text-xmasGreen-dark">__________________</span>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-[10px] uppercase font-bold text-slate-400 block">Grade & Section</span>
+                                <span id="cert-student-section" class="text-lg font-bold text-xmasRed">Grade 10 - [ Unselected ]</span>
+                            </div>
+                        </div>
+
+                        <!-- Breakdown Matrix -->
+                        <div class="grid grid-cols-3 gap-3 w-full mb-6">
+                            <div class="bg-emerald-50 border border-emerald-200 p-3 rounded-xl text-center">
+                                <span class="text-[10px] font-bold text-emerald-800 uppercase block">Part 1: Concept</span>
+                                <span id="cert-p1-score" class="text-lg font-extrabold text-emerald-900">0 / 5</span>
+                            </div>
+                            <div class="bg-blue-50 border border-blue-200 p-3 rounded-xl text-center">
+                                <span class="text-[10px] font-bold text-blue-800 uppercase block">Part 2: Linear</span>
+                                <span id="cert-p2-score" class="text-lg font-extrabold text-blue-900">0 / 10</span>
+                            </div>
+                            <div class="bg-purple-50 border border-purple-200 p-3 rounded-xl text-center">
+                                <span class="text-[10px] font-bold text-purple-800 uppercase block">Part 3: Angled</span>
+                                <span id="cert-p3-score" class="text-lg font-extrabold text-purple-900">0 / 10</span>
+                            </div>
+                        </div>
+
+                        <!-- Overall Result Summary Box -->
+                        <div class="w-full bg-xmasGreen-dark text-white rounded-2xl p-6 mb-6 flex flex-col sm:flex-row justify-between items-center shadow-lg">
+                            <div class="text-center sm:text-left mb-3 sm:mb-0">
+                                <span class="text-xs uppercase font-bold text-xmasGold tracking-wider block">Total Accumulated Score</span>
+                                <span id="cert-total-score" class="text-3xl font-extrabold text-white">0 / 25 <span class="text-sm font-normal text-slate-300">points</span></span>
+                            </div>
+                            <div class="text-center sm:text-right">
+                                <span class="text-xs uppercase font-bold text-slate-300 tracking-wider block">Final Status</span>
+                                <span id="cert-status" class="inline-block px-4 py-1.5 rounded-full text-base font-extrabold bg-red-500 text-white shadow-sm mt-1">
+                                    NEEDS PRACTICE
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Badges Unlocked Showcase Grid -->
+                        <div class="w-full border-t border-slate-200 pt-4 mb-4">
+                            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-3">Earned Achievements & Badges</span>
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                                <div id="cert-badge-1" class="opacity-40 grayscale flex flex-col items-center p-2 rounded-xl border border-slate-200 bg-slate-50">
+                                    <i class="fa-solid fa-magnifying-glass text-2xl text-xmasRed mb-1"></i>
+                                    <span class="text-[10px] font-bold text-slate-700">Work Detective</span>
+                                </div>
+                                <div id="cert-badge-2" class="opacity-40 grayscale flex flex-col items-center p-2 rounded-xl border border-slate-200 bg-slate-50">
+                                    <i class="fa-solid fa-wand-magic-sparkles text-2xl text-xmasGreen mb-1"></i>
+                                    <span class="text-[10px] font-bold text-slate-700">Formula Wizard</span>
+                                </div>
+                                <div id="cert-badge-3" class="opacity-40 grayscale flex flex-col items-center p-2 rounded-xl border border-slate-200 bg-slate-50">
+                                    <i class="fa-solid fa-compass-drafting text-2xl text-blue-600 mb-1"></i>
+                                    <span class="text-[10px] font-bold text-slate-700">Trig Titan</span>
+                                </div>
+                                <div id="cert-badge-master" class="opacity-40 grayscale flex flex-col items-center p-2 rounded-xl border border-xmasGold bg-yellow-50">
+                                    <i class="fa-solid fa-crown text-2xl text-xmasGold mb-1"></i>
+                                    <span class="text-[10px] font-bold text-pineText">Physics Master</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Timestamp Verification -->
+                        <div class="w-full flex justify-between items-center text-[10px] text-slate-400 border-t border-slate-100 pt-3">
+                            <span>Verified Grade 10 Physics Assessment</span>
+                            <span id="cert-timestamp">Date: --/--/----</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Download Trigger Button -->
+                <button onclick="downloadSummaryPNG()" class="mt-4 px-8 py-4 bg-xmasRed hover:bg-xmasRed-dark text-white font-extrabold rounded-2xl shadow-xl hover:shadow-2xl transition transform active:scale-95 flex items-center gap-3 text-lg border-2 border-xmasGold">
+                    <i class="fa-solid fa-file-arrow-down"></i> Click Here to Download the Summary
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+        <!-- Footer -->
+        <footer class="bg-xmasGreen-dark text-slate-400 text-xs py-6 border-t-2 border-xmasGold mt-12">
+            <div class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-3 text-center sm:text-left">
+                <div>
+                    <span class="text-white font-bold">Grade 10 Science Interactive Module</span> &bull; Physics Concept: Work (W = F × d × cosθ)
+                </div>
+                <div class="text-xmasGold/80 flex items-center gap-2">
+                    <i class="fa-solid fa-holly-berry"></i> Season's Greetings & Happy Learning!
+                </div>
+            </div>
+        </footer>
+
+    <!-- Audio Synthesis Engine and Logic Scripts -->
+    <script>
+        // Audio Synthesizer Engine (Web Audio API) for sound effects
+        let audioCtx = null;
+        let soundEnabled = true;
+
+        function getAudioContext() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            return audioCtx;
+        }
+
+        function toggleAudio() {
+            soundEnabled = !soundEnabled;
+            const icon = document.getElementById('audio-icon');
+            if (soundEnabled) {
+                icon.className = 'fa-solid fa-volume-high text-xmasGold';
+                playSound('click');
+            } else {
+                icon.className = 'fa-solid fa-volume-xmark text-slate-400';
+            }
+        }
+
+        function playSound(type) {
+            if (!soundEnabled) return;
+            try {
+                const ctx = getAudioContext();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+
+                const now = ctx.currentTime;
+
+                if (type === 'click') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(600, now);
+                    gain.gain.setValueAtTime(0.1, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+                    osc.start(now);
+                    osc.stop(now + 0.05);
+                } else if (type === 'correct') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(523.25, now); // C5
+                    osc.frequency.setValueAtTime(659.25, now + 0.08); // E5
+                    osc.frequency.setValueAtTime(783.99, now + 0.16); // G5
+                    gain.gain.setValueAtTime(0.15, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+                    osc.start(now);
+                    osc.stop(now + 0.35);
+                } else if (type === 'wrong') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(220, now); // A3
+                    osc.frequency.setValueAtTime(180, now + 0.1);
+                    gain.gain.setValueAtTime(0.15, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+                    osc.start(now);
+                    osc.stop(now + 0.25);
+                } else if (type === 'badge') {
+                    // Festive fanfare arpeggio
+                    const notes = [523.25, 659.25, 783.99, 1046.50];
+                    notes.forEach((freq, idx) => {
+                        const o = ctx.createOscillator();
+                        const g = ctx.createGain();
+                        o.connect(g);
+                        g.connect(ctx.destination);
+                        o.type = 'sine';
+                        o.frequency.setValueAtTime(freq, now + idx * 0.08);
+                        g.gain.setValueAtTime(0.15, now + idx * 0.08);
+                        g.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.08 + 0.3);
+                        o.start(now + idx * 0.08);
+                        o.stop(now + idx * 0.08 + 0.3);
+                    });
+                }
+            } catch (e) {
+                console.log('Audio playback dynamic trigger handled', e);
+            }
+        }
+
+        // Global State
+        const studentState = {
+            name: '',
+            section: '',
+            p1Answers: {},
+            p2Answers: {},
+            p3Answers: {},
+            p1Score: 0,
+            p2Score: 0,
+            p3Score: 0,
+            p1Completed: false,
+            p2Completed: false,
+            p3Completed: false,
+            hasErrors: false
+        };
+
+        // Data Definitions
+        const part1Data = [
+            {
+                id: 1,
+                scenario: "Santa pushing a heavy sled with a force of 200 N across the snowy ice, moving it 10 meters forward.",
+                isWork: true,
+                explanation: "Work is DONE because force applied causes displacement in the same horizontal direction."
+            },
+            {
+                id: 2,
+                scenario: "An elf holding a heavy Christmas gift bag weighing 50 N stationary above their head for 5 minutes.",
+                isWork: false,
+                explanation: "NO Work is done because there is zero displacement (d = 0 m)."
+            },
+            {
+                id: 3,
+                scenario: "Carrying a tray of gingerbread cookies horizontally across a flat floor at a constant speed.",
+                isWork: false,
+                explanation: "NO Work is done by the lifting force because the vertical force is perpendicular (90°) to the horizontal motion."
+            },
+            {
+                id: 4,
+                scenario: "A reindeer pulling a sleigh up a slope with a force of 450 N over a distance of 25 meters.",
+                isWork: true,
+                explanation: "Work is DONE because the force applied moves the sleigh along the incline."
+            },
+            {
+                id: 5,
+                scenario: "Pushing against a gigantic solid wall of ice with maximum force, but the ice wall does not move at all.",
+                isWork: false,
+                explanation: "NO Work is done because displacement is zero (d = 0 m)."
+            }
+        ];
+
+        // Generator for Part 2 Questions (Random missing variables)
+        let part2Questions = [];
+        function generatePart2Data() {
+            part2Questions = [
+                {
+                    id: 1,
+                    missing: 'W',
+                    f: 150,
+                    d: 12,
+                    text: "An elf exerts a force of <strong>150 N</strong> to push a gift crate through a distance of <strong>12 meters</strong>. Calculate the total Work (W) done in Joules (J).",
+                    unit: "J"
+                },
+                {
+                    id: 2,
+                    missing: 'F',
+                    w: 1250,
+                    d: 25,
+                    text: "A total of <strong>1250 J</strong> of work is done in sliding a toy box across <strong>25 meters</strong>. What amount of Force (F) in Newtons (N) was exerted?",
+                    unit: "N"
+                },
+                {
+                    id: 3,
+                    missing: 'd',
+                    w: 600,
+                    f: 80,
+                    text: "A force of <strong>80 N</strong> is applied to push a festive decoration doing <strong>600 J</strong> of work. What distance (d) in meters did it move?",
+                    unit: "m"
+                },
+                {
+                    id: 4,
+                    missing: 'W',
+                    f: 220.5,
+                    d: 8.4,
+                    text: "A reindeer pulls a sled with <strong>220.5 N</strong> of force for a distance of <strong>8.4 meters</strong>. How much Work (W) is accomplished?",
+                    unit: "J"
+                },
+                {
+                    id: 5,
+                    missing: 'F',
+                    w: 3450,
+                    d: 15,
+                    text: "How much Force (F) in Newtons is required to perform <strong>3450 J</strong> of work over a distance of <strong>15 meters</strong>?",
+                    unit: "N"
+                }
+            ];
+            
+            // Calculate answers
+            part2Questions.forEach(q => {
+                if (q.missing === 'W') q.correct = q.f * q.d;
+                else if (q.missing === 'F') q.correct = q.w / q.d;
+                else if (q.missing === 'd') q.correct = q.w / q.f;
+            });
+        }
+
+        // Generator for Part 3 Questions (Work at Angle)
+        let part3Questions = [];
+        function generatePart3Data() {
+            part3Questions = [
+                {
+                    id: 1,
+                    f: 200,
+                    angle: 30,
+                    d: 15,
+                    text: "Santa pulls a toy wagon with a force of <strong>200 N</strong> at an angle of <strong>30°</strong> above the horizontal over a distance of <strong>15 meters</strong>. Calculate the Work (W) done.",
+                    unit: "J"
+                },
+                {
+                    id: 2,
+                    f: 350,
+                    angle: 45,
+                    d: 20,
+                    text: "A snowblower is pushed with a force of <strong>350 N</strong> directed at an angle of <strong>45°</strong> to the horizontal ground for <strong>20 meters</strong>. How much Work (W) is done?",
+                    unit: "J"
+                },
+                {
+                    id: 3,
+                    f: 120,
+                    angle: 60,
+                    d: 8.5,
+                    text: "An elf pulls a decorative sleigh with <strong>120 N</strong> of force at an angle of <strong>60°</strong> to the horizontal for <strong>8.5 meters</strong>. Determine the total Work (W).",
+                    unit: "J"
+                },
+                {
+                    id: 4,
+                    f: 500,
+                    angle: 25,
+                    d: 10,
+                    text: "A rope pulls a heavy festive log with <strong>500 N</strong> at an angle of <strong>25°</strong> relative to the horizontal ground over <strong>10 meters</strong>. Find the Work (W) performed.",
+                    unit: "J"
+                },
+                {
+                    id: 5,
+                    f: 180,
+                    angle: 0,
+                    d: 14,
+                    text: "A force of <strong>180 N</strong> is applied completely horizontally (angle θ = 0°) to move a present box <strong>14 meters</strong>. Calculate the Work done. (Hint: cos(0°) = 1)",
+                    unit: "J"
+                }
+            ];
+
+            part3Questions.forEach(q => {
+                const rad = q.angle * (Math.PI / 180);
+                q.correct = q.f * Math.cos(rad) * q.d;
+            });
+        }
+
+        // Initialize Render Functions
+        window.addEventListener('DOMContentLoaded', () => {
+            generatePart2Data();
+            generatePart3Data();
+            renderPart1();
+            renderPart2();
+            renderPart3();
+            updateTimestamp();
+        });
+
+        function updateStudentDetails() {
+            const nameInput = document.getElementById('student-name').value;
+            const sectionInput = document.getElementById('student-section').value;
+
+            studentState.name = nameInput.trim();
+            studentState.section = sectionInput;
+
+            document.getElementById('cert-student-name').innerText = studentState.name || '__________________';
+            document.getElementById('cert-student-section').innerText = studentState.section ? `Grade 10 - ${studentState.section}` : 'Grade 10 - [ Unselected ]';
+        }
+
+        function switchTab(tabId) {
+            playSound('click');
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.className = "tab-btn px-5 py-3 rounded-2xl font-bold text-sm transition-all flex items-center gap-2 bg-white text-slate-600 hover:bg-slate-100 border-2 border-slate-200";
+            });
+
+            document.getElementById(tabId).classList.remove('hidden');
+            const activeBtn = document.getElementById(`tab-btn-${tabId}`);
+            if (tabId === 'summary') {
+                activeBtn.className = "tab-btn active px-5 py-3 rounded-2xl font-bold text-sm transition-all flex items-center gap-2 bg-xmasGold text-pineText border-2 border-xmasGold shadow-lg";
+                updateSummaryView();
+            } else {
+                activeBtn.className = "tab-btn active px-5 py-3 rounded-2xl font-bold text-sm transition-all flex items-center gap-2 bg-xmasGreen text-white shadow-lg border-2 border-xmasGreen";
+            }
+        }
+
+        // Render Part 1
+        function renderPart1() {
+            const container = document.getElementById('part1-scenarios');
+            container.innerHTML = part1Data.map((item, idx) => `
+                <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5 transition hover:shadow-md">
+                    <div class="flex items-start gap-3">
+                        <span class="w-7 h-7 rounded-full bg-xmasGreen text-white font-bold flex items-center justify-center text-xs shrink-0 mt-0.5">
+                            ${idx + 1}
+                        </span>
+                        <div class="flex-grow">
+                            <p class="text-slate-800 font-medium text-base mb-4">${item.scenario}</p>
+                            <div class="flex flex-wrap gap-3 mb-3">
+                                <button onclick="answerPart1(${item.id}, true)" id="p1-btn-${item.id}-true" 
+                                    class="px-5 py-2.5 rounded-xl border-2 border-slate-200 bg-white font-bold text-sm hover:border-xmasGreen hover:text-xmasGreen transition flex items-center gap-2">
+                                    <i class="fa-solid fa-circle-check text-emerald-500"></i> Work Done
+                                </button>
+                                <button onclick="answerPart1(${item.id}, false)" id="p1-btn-${item.id}-false" 
+                                    class="px-5 py-2.5 rounded-xl border-2 border-slate-200 bg-white font-bold text-sm hover:border-xmasRed hover:text-xmasRed transition flex items-center gap-2">
+                                    <i class="fa-solid fa-circle-xmark text-rose-500"></i> No Work Done
+                                </button>
+                            </div>
+                            <div id="p1-feedback-${item.id}" class="hidden rounded-xl p-3 text-xs font-semibold mt-2"></div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function answerPart1(id, userChoice) {
+            const item = part1Data.find(q => q.id === id);
+            const trueBtn = document.getElementById(`p1-btn-${id}-true`);
+            const falseBtn = document.getElementById(`p1-btn-${id}-false`);
+            const feedback = document.getElementById(`p1-feedback-${id}`);
+
+            // Lock further clicks on this item
+            trueBtn.disabled = true;
+            falseBtn.disabled = true;
+
+            const isCorrect = userChoice === item.isWork;
+            if (isCorrect) {
+                studentState.p1Score += 1;
+                playSound('correct');
+            } else {
+                studentState.hasErrors = true;
+                playSound('wrong');
+            }
+
+            studentState.p1Answers[id] = userChoice;
+
+            // Visual button styling
+            if (userChoice) {
+                trueBtn.className = isCorrect ? "px-5 py-2.5 rounded-xl border-2 border-emerald-500 bg-emerald-50 font-bold text-sm text-emerald-800" : "px-5 py-2.5 rounded-xl border-2 border-rose-500 bg-rose-50 font-bold text-sm text-rose-800";
+            } else {
+                falseBtn.className = isCorrect ? "px-5 py-2.5 rounded-xl border-2 border-emerald-500 bg-emerald-50 font-bold text-sm text-emerald-800" : "px-5 py-2.5 rounded-xl border-2 border-rose-500 bg-rose-50 font-bold text-sm text-rose-800";
+            }
+
+            feedback.classList.remove('hidden');
+            if (isCorrect) {
+                feedback.className = "rounded-xl p-3 text-xs font-semibold mt-2 bg-emerald-50 border border-emerald-200 text-emerald-800";
+                feedback.innerHTML = `<i class="fa-solid fa-circle-check mr-1"></i> <strong>Correct!</strong> ${item.explanation}`;
+            } else {
+                feedback.className = "rounded-xl p-3 text-xs font-semibold mt-2 bg-rose-50 border border-rose-200 text-rose-800";
+                feedback.innerHTML = `<i class="fa-solid fa-circle-xmark mr-1"></i> <strong>Incorrect.</strong> ${item.explanation}`;
+            }
+
+            updateScores();
+
+            // Check if Part 1 complete
+            if (Object.keys(studentState.p1Answers).length === part1Data.length) {
+                studentState.p1Completed = true;
+                unlockBadge(1);
+            }
+        }
+
+        // Render Part 2
+        function renderPart2() {
+            const container = document.getElementById('part2-questions');
+            container.innerHTML = part2Questions.map((q, idx) => `
+                <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5 hover:shadow-md transition">
+                    <div class="flex items-start gap-3">
+                        <span class="w-7 h-7 rounded-full bg-xmasRed text-white font-bold flex items-center justify-center text-xs shrink-0 mt-0.5">
+                            ${idx + 1}
+                        </span>
+                        <div class="flex-grow">
+                            <p class="text-slate-800 font-medium text-base mb-4">${q.text}</p>
+                            
+                            <div class="flex flex-wrap items-center gap-3">
+                                <label class="text-xs font-bold text-slate-500 uppercase">Your Answer:</label>
+                                <div class="relative">
+                                    <input type="number" step="0.01" id="p2-input-${q.id}" placeholder="0.00" 
+                                        class="w-36 px-3 py-2 bg-white border-2 border-slate-200 rounded-xl font-bold text-slate-800 focus:border-xmasGreen focus:outline-none transition">
+                                    <span class="ml-2 font-bold text-slate-600 text-sm">${q.unit}</span>
+                                </div>
+                                <button onclick="submitPart2(${q.id})" id="p2-btn-${q.id}"
+                                    class="px-4 py-2 bg-xmasGreen hover:bg-xmasGreen-light text-white font-bold text-xs rounded-xl transition shadow-sm">
+                                    Submit
+                                </button>
+                            </div>
+                            <div id="p2-feedback-${q.id}" class="hidden rounded-xl p-3 text-xs font-semibold mt-3"></div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function submitPart2(id) {
+            const q = part2Questions.find(item => item.id === id);
+            const input = document.getElementById(`p2-input-${id}`);
+            const btn = document.getElementById(`p2-btn-${id}`);
+            const feedback = document.getElementById(`p2-feedback-${id}`);
+
+            const val = parseFloat(input.value);
+            if (isNaN(val)) {
+                alert("Please enter a valid numeric answer.");
+                return;
+            }
+
+            input.disabled = true;
+            btn.disabled = true;
+            btn.classList.add('opacity-50');
+
+            const tolerance = 0.05;
+            const isCorrect = Math.abs(val - q.correct) <= tolerance;
+
+            if (isCorrect) {
+                studentState.p2Score += 2; // 2 points each, 5 questions = 10 pts
+                playSound('correct');
+            } else {
+                studentState.hasErrors = true;
+                playSound('wrong');
+            }
+
+            studentState.p2Answers[id] = val;
+
+            feedback.classList.remove('hidden');
+            if (isCorrect) {
+                feedback.className = "rounded-xl p-3 text-xs font-semibold mt-3 bg-emerald-50 border border-emerald-200 text-emerald-800";
+                feedback.innerHTML = `<i class="fa-solid fa-circle-check mr-1"></i> <strong>Correct!</strong> Calculated Value: <strong>${q.correct.toFixed(2)} ${q.unit}</strong>.`;
+            } else {
+                feedback.className = "rounded-xl p-3 text-xs font-semibold mt-3 bg-rose-50 border border-rose-200 text-rose-800";
+                feedback.innerHTML = `<i class="fa-solid fa-circle-xmark mr-1"></i> <strong>Incorrect.</strong> Correct answer is <strong>${q.correct.toFixed(2)} ${q.unit}</strong>.`;
+            }
+
+            updateScores();
+
+            if (Object.keys(studentState.p2Answers).length === part2Questions.length) {
+                studentState.p2Completed = true;
+                unlockBadge(2);
+            }
+        }
+
+        // Render Part 3 with Vector SVG Canvas Visualizer
+        function renderPart3() {
+            const container = document.getElementById('part3-questions');
+            container.innerHTML = part3Questions.map((q, idx) => `
+                <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5 hover:shadow-md transition">
+                    <div class="flex flex-col lg:flex-row gap-6">
+                        <div class="flex-grow">
+                            <div class="flex items-start gap-3 mb-4">
+                                <span class="w-7 h-7 rounded-full bg-purple-600 text-white font-bold flex items-center justify-center text-xs shrink-0 mt-0.5">
+                                    ${idx + 1}
+                                </span>
+                                <p class="text-slate-800 font-medium text-base">${q.text}</p>
+                            </div>
+
+                            <div class="flex flex-wrap items-center gap-3">
+                                <label class="text-xs font-bold text-slate-500 uppercase">Calculated Work (W):</label>
+                                <div class="relative">
+                                    <input type="number" step="0.01" id="p3-input-${q.id}" placeholder="0.00" 
+                                        class="w-36 px-3 py-2 bg-white border-2 border-slate-200 rounded-xl font-bold text-slate-800 focus:border-xmasGreen focus:outline-none transition">
+                                    <span class="ml-2 font-bold text-slate-600 text-sm">Joules (J)</span>
+                                </div>
+                                <button onclick="submitPart3(${q.id})" id="p3-btn-${q.id}"
+                                    class="px-4 py-2 bg-xmasGreen hover:bg-xmasGreen-light text-white font-bold text-xs rounded-xl transition shadow-sm">
+                                    Submit
+                                </button>
+                            </div>
+                            <div id="p3-feedback-${q.id}" class="hidden rounded-xl p-3 text-xs font-semibold mt-3"></div>
+                        </div>
+
+                        <!-- Vector SVG Diagram -->
+                        <div class="w-full lg:w-64 bg-white border border-slate-200 rounded-xl p-3 flex flex-col items-center justify-center shrink-0">
+                            <span class="text-[10px] font-bold text-slate-400 uppercase mb-1">Vector Visual Diagram (θ = ${q.angle}°)</span>
+                            ${renderVectorSVG(q.angle, q.f, q.d)}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // SVG Drawing Helper function
+        function renderVectorSVG(angle, force, distance) {
+            const width = 220;
+            const height = 130;
+            const originX = 40;
+            const originY = 95;
+            const length = 90;
+
+            const rad = angle * (Math.PI / 180);
+            const forceX = originX + length * Math.cos(rad);
+            const forceY = originY - length * Math.sin(rad);
+
+            return `
+                <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" class="w-full h-auto">
+                    <!-- Ground/Baseline -->
+                    <line x1="20" y1="${originY}" x2="200" y2="${originY}" stroke="#94A3B8" stroke-width="2" stroke-dasharray="4,4" />
+                    
+                    <!-- Object Block -->
+                    <rect x="${originX - 15}" y="${originY - 15}" width="30" height="30" rx="4" fill="#C41E3A" opacity="0.8" />
+                    <text x="${originX}" y="${originY + 4}" font-size="10" font-weight="bold" fill="white" text-anchor="middle">m</text>
+
+                    <!-- Displacement Vector d -->
+                    <line x1="${originX}" y1="${originY + 20}" x2="${originX + 110}" y2="${originY + 20}" stroke="#165B33" stroke-width="3" stroke-linecap="round" />
+                    <polygon points="${originX + 115},${originY + 20} ${originX + 107},${originY + 16} ${originX + 107},${originY + 24}" fill="#165B33" />
+                    <text x="${originX + 55}" y="${originY + 33}" font-size="9" font-weight="bold" fill="#165B33" text-anchor="middle">d = ${distance}m</text>
+
+                    <!-- Force Vector F -->
+                    <line x1="${originX}" y1="${originY}" x2="${forceX}" y2="${forceY}" stroke="#2563EB" stroke-width="3" stroke-linecap="round" />
+                    <polygon points="${forceX},${forceY} ${forceX - 6},${forceY + 6} ${forceX - 2},${forceY + 8}" fill="#2563EB" />
+                    <text x="${forceX + 5}" y="${forceY - 5}" font-size="9" font-weight="bold" fill="#2563EB">F=${force}N</text>
+
+                    <!-- Angle Arc -->
+                    ${angle > 0 ? `
+                        <path d="M ${originX + 35} ${originY} A 35 35 0 0 0 ${originX + 35 * Math.cos(rad)} ${originY - 35 * Math.sin(rad)}" fill="none" stroke="#D4AF37" stroke-width="2" />
+                        <text x="${originX + 42}" y="${originY - 8}" font-size="9" font-weight="bold" fill="#B45309">θ=${angle}°</text>
+                    ` : ''}
+                </svg>
+            `;
+        }
+
+        function submitPart3(id) {
+            const q = part3Questions.find(item => item.id === id);
+            const input = document.getElementById(`p3-input-${id}`);
+            const btn = document.getElementById(`p3-btn-${id}`);
+            const feedback = document.getElementById(`p3-feedback-${id}`);
+
+            const val = parseFloat(input.value);
+            if (isNaN(val)) {
+                alert("Please enter a valid numerical answer.");
+                return;
+            }
+
+            input.disabled = true;
+            btn.disabled = true;
+            btn.classList.add('opacity-50');
+
+            const tolerance = 0.5; // Slightly wider tolerance for decimal cosine rounding variances
+            const isCorrect = Math.abs(val - q.correct) <= tolerance;
+
+            if (isCorrect) {
+                studentState.p3Score += 2; // 2 points each, 5 questions = 10 pts
+                playSound('correct');
+            } else {
+                studentState.hasErrors = true;
+                playSound('wrong');
+            }
+
+            studentState.p3Answers[id] = val;
+
+            feedback.classList.remove('hidden');
+            if (isCorrect) {
+                feedback.className = "rounded-xl p-3 text-xs font-semibold mt-3 bg-emerald-50 border border-emerald-200 text-emerald-800";
+                feedback.innerHTML = `<i class="fa-solid fa-circle-check mr-1"></i> <strong>Correct!</strong> Calculated Work: <strong>${q.correct.toFixed(2)} J</strong>.`;
+            } else {
+                feedback.className = "rounded-xl p-3 text-xs font-semibold mt-3 bg-rose-50 border border-rose-200 text-rose-800";
+                feedback.innerHTML = `<i class="fa-solid fa-circle-xmark mr-1"></i> <strong>Incorrect.</strong> Formula: <strong>${q.f} × cos(${q.angle}°) × ${q.d} = ${q.correct.toFixed(2)} J</strong>.`;
+            }
+
+            updateScores();
+
+            if (Object.keys(studentState.p3Answers).length === part3Questions.length) {
+                studentState.p3Completed = true;
+                unlockBadge(3);
+            }
+        }
+
+        function updateScores() {
+            const total = studentState.p1Score + studentState.p2Score + studentState.p3Score;
+            
+            document.getElementById('score-display').innerText = `${total} / 25 pts`;
+            document.getElementById('part1-score-tag').innerText = `Score: ${studentState.p1Score} / 5`;
+            document.getElementById('part2-score-tag').innerText = `Score: ${studentState.p2Score} / 10`;
+            document.getElementById('part3-score-tag').innerText = `Score: ${studentState.p3Score} / 10`;
+
+            const percentage = (total / 25) * 100;
+            document.getElementById('overall-progress-bar').style.width = `${percentage}%`;
+        }
+
+        function unlockBadge(partNum) {
+            playSound('badge');
+            if (partNum === 1) {
+                const icon = document.getElementById('badge-p1-icon');
+                const title = document.getElementById('badge-p1-title');
+                icon.className = "w-12 h-12 rounded-xl bg-xmasRed text-xmasGold flex items-center justify-center text-2xl shadow-md gold-glow floating";
+                icon.innerHTML = `<i class="fa-solid fa-magnifying-glass"></i>`;
+                title.className = "text-xs font-extrabold text-xmasRed";
+                title.innerText = "Work Detective Unlocked!";
+            } else if (partNum === 2) {
+                const icon = document.getElementById('badge-p2-icon');
+                const title = document.getElementById('badge-p2-title');
+                icon.className = "w-12 h-12 rounded-xl bg-xmasGreen text-xmasGold flex items-center justify-center text-2xl shadow-md gold-glow floating";
+                icon.innerHTML = `<i class="fa-solid fa-wand-magic-sparkles"></i>`;
+                title.className = "text-xs font-extrabold text-xmasGreen";
+                title.innerText = "Formula Wizard Unlocked!";
+            } else if (partNum === 3) {
+                const icon = document.getElementById('badge-p3-icon');
+                const title = document.getElementById('badge-p3-title');
+                icon.className = "w-12 h-12 rounded-xl bg-purple-600 text-xmasGold flex items-center justify-center text-2xl shadow-md gold-glow floating";
+                icon.innerHTML = `<i class="fa-solid fa-compass-drafting"></i>`;
+                title.className = "text-xs font-extrabold text-purple-700";
+                title.innerText = "Trig Titan Unlocked!";
+            }
+        }
+
+        function updateSummaryView() {
+            const total = studentState.p1Score + studentState.p2Score + studentState.p3Score;
+
+            document.getElementById('cert-p1-score').innerText = `${studentState.p1Score} / 5`;
+            document.getElementById('cert-p2-score').innerText = `${studentState.p2Score} / 10`;
+            document.getElementById('cert-p3-score').innerText = `${studentState.p3Score} / 10`;
+            document.getElementById('cert-total-score').innerHTML = `${total} / 25 <span class="text-sm font-normal text-slate-300">points</span>`;
+
+            const statusBadge = document.getElementById('cert-status');
+            if (total >= 20) {
+                statusBadge.className = "inline-block px-5 py-1.5 rounded-full text-base font-extrabold bg-emerald-500 text-white shadow-md";
+                statusBadge.innerText = "PASSED";
+            } else {
+                statusBadge.className = "inline-block px-5 py-1.5 rounded-full text-base font-extrabold bg-rose-500 text-white shadow-md";
+                statusBadge.innerText = "NEEDS PRACTICE";
+            }
+
+            // Badges display on Certificate
+            if (studentState.p1Completed) {
+                document.getElementById('cert-badge-1').classList.remove('opacity-40', 'grayscale');
+                document.getElementById('cert-badge-1').classList.add('border-xmasRed', 'bg-rose-50');
+            }
+            if (studentState.p2Completed) {
+                document.getElementById('cert-badge-2').classList.remove('opacity-40', 'grayscale');
+                document.getElementById('cert-badge-2').classList.add('border-xmasGreen', 'bg-emerald-50');
+            }
+            if (studentState.p3Completed) {
+                document.getElementById('cert-badge-3').classList.remove('opacity-40', 'grayscale');
+                document.getElementById('cert-badge-3').classList.add('border-blue-500', 'bg-blue-50');
+            }
+
+            // Master Badge condition: Perfect Score 25/25 and NO errors made
+            if (total === 25 && !studentState.hasErrors) {
+                document.getElementById('cert-badge-master').classList.remove('opacity-40', 'grayscale');
+                document.getElementById('cert-badge-master').classList.add('border-xmasGold', 'bg-yellow-100', 'gold-glow');
+            }
+        }
+
+        function updateTimestamp() {
+            const now = new Date();
+            const formatted = now.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            document.getElementById('cert-timestamp').innerText = `Generated: ${formatted}`;
+        }
+
+        // PNG Summary Generator using html2canvas
+        function downloadSummaryPNG() {
+            playSound('click');
+            const certElement = document.getElementById('certificate-card');
+
+            html2canvas(certElement, {
+                scale: 2, // High resolution rendering
+                useCORS: true,
+                backgroundColor: '#ffffff'
+            }).then(canvas => {
+                const imageURI = canvas.toDataURL('image/png');
+                const downloadLink = document.createElement('a');
+                
+                const studentCleanName = (studentState.name || 'Student').replace(/[^a-zA-Z0-9]/g, '_');
+                downloadLink.download = `work_physics_activity_summary_${studentCleanName}.png`;
+                downloadLink.href = imageURI;
+                document.body.appendChild(downloadLink);
+                downloadLink.click();
+                document.body.removeChild(downloadLink);
+            }).catch(err => {
+                console.error('Error generating PNG summary:', err);
+                alert('Could not render summary card as PNG. Please check browser permissions.');
+            });
+        }
+    </script>
+</body>
+</html>
